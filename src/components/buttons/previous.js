@@ -24,12 +24,12 @@ module.exports = {
       const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId("previous")
-          .setEmoji("◀️")
+          .setLabel("Previous")
           .setStyle(ButtonStyle.Primary)
           .setDisabled(state.page === 1),
         new ButtonBuilder()
           .setCustomId("next")
-          .setEmoji("▶️")
+          .setLabel("Next")
           .setStyle(ButtonStyle.Primary)
           .setDisabled(state.page === state.totalPages)
       );

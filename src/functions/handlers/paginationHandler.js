@@ -3,6 +3,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
+  ComponentType,
 } = require("discord.js");
 
 module.exports = (client) => {
@@ -17,12 +18,12 @@ module.exports = (client) => {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId("previous")
-        .setEmoji("◀️")
+        .setLabel("Previous")
         .setStyle(ButtonStyle.Primary)
         .setDisabled(true),
       new ButtonBuilder()
         .setCustomId("next")
-        .setEmoji("▶️")
+        .setLabel("Next")
         .setStyle(ButtonStyle.Primary)
         .setDisabled(totalPages <= 1)
     );
@@ -39,7 +40,7 @@ module.exports = (client) => {
       return embed;
     };
 
-    await interaction.reply({
+    reply = await interaction.reply({
       embeds: [await embedMessage(page)],
       components: [row],
     });
@@ -51,6 +52,33 @@ module.exports = (client) => {
       fields,
       totalPages,
       originalEmbed: await embedMessage(page),
+    });
+
+    const filter = (i) => i.user.id === interaction.user.id;
+
+    const collector = reply.createMessageComponentCollector({
+      componentType: ComponentType.Button,
+      filter,
+      time: 30000,
+    });
+
+    collector.on("end", (collected) => {
+      console.log(`Collected ${collected.size} interactions.`);
+
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId("previous")
+          .setLabel("Previous")
+          .setStyle(ButtonStyle.Primary)
+          .setDisabled(true),
+        new ButtonBuilder()
+          .setCustomId("next")
+          .setLabel("Next")
+          .setStyle(ButtonStyle.Primary)
+          .setDisabled(true)
+      );
+
+      reply.edit({ components: [row] });
     });
   };
 };
