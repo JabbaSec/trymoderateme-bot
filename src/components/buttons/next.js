@@ -1,0 +1,40 @@
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+
+module.exports = {
+  data: {
+    id: "next",
+  },
+  async execute(interaction) {
+    const client = interaction.client;
+    const state = client.pages.get(interaction.message.interaction.id);
+
+    if (!state) return;
+
+    if (state.page < state.totalPages) {
+      state.page++;
+
+      const start = (state.page - 1) * 5;
+      const end = start + 5;
+      const paginatedFields = state.fields.slice(start, end);
+
+      const newEmbed = state.originalEmbed
+        .setFields(paginatedFields)
+        .setTitle(`Page ${state.page}/${state.totalPages}`);
+
+      const row = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId("previous")
+          .setEmoji("◀️")
+          .setStyle(ButtonStyle.Primary)
+          .setDisabled(state.page === 1),
+        new ButtonBuilder()
+          .setCustomId("next")
+          .setEmoji("▶️")
+          .setStyle(ButtonStyle.Primary)
+          .setDisabled(state.page === state.totalPages)
+      );
+
+      await interaction.update({ embeds: [newEmbed], components: [row] });
+    }
+  },
+};

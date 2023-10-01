@@ -67,6 +67,11 @@ module.exports = {
         const warnings = modActions.filter(
           (action) => action.type === "Warning"
         );
+
+        if (warnings.length === 0) {
+          return await interaction.reply(`${user.tag} has no warnings.`);
+        }
+
         const warningFields = warnings.map((warning) => ({
           name: `Warning ID: ${warning._id}`,
           value: `Reason: ${warning.reason}\nTimestamp: ${new Date(
@@ -74,10 +79,11 @@ module.exports = {
           ).toLocaleString()}`,
           inline: false,
         }));
-        const embed = new EmbedBuilder()
-          .setTitle(`Warnings for ${user.tag}`)
-          .addFields(warningFields);
-        await interaction.reply({ embeds: [embed] });
+
+        await client.paginationEmbed(interaction, warningFields, {
+          title: `Warnings for ${user.tag}`,
+          color: "#FFA500",
+        });
         break;
       }
       case "remove": {
