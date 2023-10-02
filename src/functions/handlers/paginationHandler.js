@@ -62,9 +62,7 @@ module.exports = (client) => {
       time: 30000,
     });
 
-    collector.on("end", (collected) => {
-      console.log(`Collected ${collected.size} interactions.`);
-
+    collector.on("end", () => {
       const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId("previous")

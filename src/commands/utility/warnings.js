@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("warning")
+    .setName("warnings")
     .setDescription("Manage user warnings")
     .addSubcommand((subcommand) =>
       subcommand
@@ -61,6 +61,7 @@ module.exports = {
         await interaction.reply(`Warned ${user.tag} for: ${reason}`);
         break;
       }
+
       case "view": {
         const user = interaction.options.getUser("user");
         const modActions = await client.handleModeration.getModActions(user.id);
@@ -86,6 +87,7 @@ module.exports = {
         });
         break;
       }
+
       case "remove": {
         const warningId = interaction.options.getString("warningid");
         await client.handleModeration.removeModAction(warningId);

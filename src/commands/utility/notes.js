@@ -1,9 +1,8 @@
-// src/commands/utility/notes.js
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("note")
+    .setName("notes")
     .setDescription("Manage user notes")
     .addSubcommand((subcommand) =>
       subcommand
@@ -62,23 +61,31 @@ module.exports = {
         await interaction.reply(`Added note to ${user.tag}: ${note}`);
         break;
       }
+
       case "view": {
         const user = interaction.options.getUser("user");
         const modActions = await client.handleModeration.getModActions(user.id);
         const notes = modActions.filter((action) => action.type === "Note");
+
+        if (notes.length === 0) {
+          return await interaction.reply(`${user.tag} has no notes.`);
+        }
+
         const noteFields = notes.map((note) => ({
           name: `Note ID: ${note._id}`,
-          value: `Note: ${note.reason}\nTimestamp: ${new Date(
+          value: `Reason: ${note.reason}\nTimestamp: ${new Date(
             note.timestamp
           ).toLocaleString()}`,
           inline: false,
         }));
-        const embed = new EmbedBuilder()
-          .setTitle(`Notes for ${user.tag}`)
-          .addFields(noteFields);
-        await interaction.reply({ embeds: [embed] });
+
+        await client.paginationEmbed(interaction, noteFields, {
+          title: `Notes for ${user.tag}`,
+          color: "#FFA500",
+        });
         break;
       }
+
       case "remove": {
         const noteId = interaction.options.getString("noteid");
         await client.handleModeration.removeModAction(noteId);

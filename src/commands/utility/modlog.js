@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -30,10 +30,11 @@ module.exports = {
       inline: false,
     }));
 
-    const embed = new EmbedBuilder()
-      .setTitle(`Moderation history for ${user.tag}`)
-      .addFields(recordFields);
+    const options = {
+      color: "#FF0000",
+      title: `Moderation history for ${user.tag}`,
+    };
 
-    await interaction.reply({ embeds: [embed] });
+    await client.paginationEmbed(interaction, recordFields, options);
   },
 };
