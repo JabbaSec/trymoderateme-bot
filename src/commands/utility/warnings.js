@@ -42,6 +42,17 @@ module.exports = {
             .setDescription("ID of the warning to remove")
             .setRequired(true)
         )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("clear")
+        .setDescription("Clears all of a user's warnings.")
+        .addUserOption((option) =>
+          option
+            .setName("user")
+            .setDescription("The user to clear warnings for")
+            .setRequired(true)
+        )
     ),
 
   async execute(interaction) {
@@ -92,6 +103,15 @@ module.exports = {
         const warningId = interaction.options.getString("warningid");
         await client.handleModeration.removeModAction(warningId);
         await interaction.reply(`Removed warning with ID ${warningId}`);
+        break;
+      }
+
+      case "clear": {
+        const user = interaction.options.getUser("user");
+        await client.handleModeration.clearModAction(user.id, "Warning");
+        await interaction.reply(
+          `All warnings have been cleared from ${user.tag}`
+        );
         break;
       }
     }

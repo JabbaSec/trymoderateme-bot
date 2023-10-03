@@ -20,5 +20,9 @@ module.exports = (client) => {
     removeModAction: async (id) => {
       await Moderation.findByIdAndDelete(id);
     },
+
+    clearModAction: async (discordId, type) => {
+      await Moderation.deleteMany({ discordId, type });
+    },
   };
 };
