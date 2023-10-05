@@ -59,6 +59,12 @@ module.exports = {
     const { client } = interaction;
     const subcommand = interaction.options.getSubcommand();
 
+    const hasPermission = await client.checkPermissions(
+      interaction,
+      "Moderator"
+    );
+    if (!hasPermission) return;
+
     switch (subcommand) {
       case "add": {
         const user = interaction.options.getUser("user");
