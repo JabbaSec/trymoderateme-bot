@@ -11,9 +11,14 @@ module.exports = {
         .setRequired(true)
     ),
 
-  async execute(interaction) {
-    const { client } = interaction;
+  async execute(interaction, client) {
     const user = interaction.options.getUser("user");
+
+    const hasPermission = await client.checkPermissions(
+      interaction,
+      "Moderator"
+    );
+    if (!hasPermission) return;
 
     const modActions = await client.handleModeration.getModActions(user.id);
 

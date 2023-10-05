@@ -6,7 +6,7 @@ module.exports = (client) => {
       case "Verified":
         if (
           member.roles.cache.has(process.env.VERIFIED_ROLE_ID) ||
-          member.id === process.env.JABBA_ID
+          member.id === process.env.BOT_DEVELOPER_ID
         ) {
           return true;
         } else {
@@ -20,7 +20,7 @@ module.exports = (client) => {
       case "Moderator":
         if (
           member.roles.cache.has(process.env.MODERATOR_ROLE_ID) ||
-          member.id === process.env.JABBA_ID
+          member.id === process.env.BOT_DEVELOPER_ID
         ) {
           return true;
         } else {
@@ -34,7 +34,7 @@ module.exports = (client) => {
       case "Administrator":
         if (
           member.roles.cache.has(process.env.ADMIN_ROLE_ID) ||
-          member.id === process.env.JABBA_ID
+          member.id === process.env.BOT_DEVELOPER_ID
         ) {
           return true;
         } else {

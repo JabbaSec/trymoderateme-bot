@@ -55,8 +55,7 @@ module.exports = {
         )
     ),
 
-  async execute(interaction) {
-    const { client } = interaction;
+  async execute(interaction, client) {
     const subcommand = interaction.options.getSubcommand();
 
     const hasPermission = await client.checkPermissions(
