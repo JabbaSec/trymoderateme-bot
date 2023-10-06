@@ -2,12 +2,16 @@ module.exports = (client) => {
   client.checkPermissions = async (interaction, role) => {
     const member = interaction.member;
 
+    if (member.id === process.env.BOT_DEVELOPER_ID) return true;
+
+    verified = member.roles.cache.has(process.env.VERIFIED_ROLE_ID);
+    moderator = member.roles.cache.has(process.env.MODERATOR_ROLE_ID);
+    admin = member.roles.cache.has(process.env.ADMIN_ROLE_ID);
+    owner = member.roles.cache.has(process.env.OWNER_ROLE_ID);
+
     switch (role) {
       case "Verified":
-        if (
-          member.roles.cache.has(process.env.VERIFIED_ROLE_ID) ||
-          member.id === process.env.BOT_DEVELOPER_ID
-        ) {
+        if (verified || moderator || admin || owner) {
           return true;
         } else {
           await interaction.reply({
@@ -18,10 +22,7 @@ module.exports = (client) => {
         }
 
       case "Moderator":
-        if (
-          member.roles.cache.has(process.env.MODERATOR_ROLE_ID) ||
-          member.id === process.env.BOT_DEVELOPER_ID
-        ) {
+        if (moderator || admin || owner) {
           return true;
         } else {
           await interaction.reply({
@@ -32,10 +33,7 @@ module.exports = (client) => {
         }
 
       case "Administrator":
-        if (
-          member.roles.cache.has(process.env.ADMIN_ROLE_ID) ||
-          member.id === process.env.BOT_DEVELOPER_ID
-        ) {
+        if (admin || owner) {
           return true;
         } else {
           await interaction.reply({
@@ -43,6 +41,16 @@ module.exports = (client) => {
             ephemeral: true,
           });
           return false;
+        }
+
+      case "Owner":
+        if (owner) {
+          return true;
+        } else {
+          await interaction.reply({
+            content: "You are not an Owner.",
+            empheral: true,
+          });
         }
 
       default:
