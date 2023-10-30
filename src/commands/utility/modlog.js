@@ -29,9 +29,9 @@ module.exports = {
 
     const recordFields = modActions.map((record) => ({
       name: `${record.type} - ID: ${record._id}`,
-      value: `Reason: ${record.reason}\nModerator: ${
+      value: `Reason: ${record.reason}\nModerator: <@${
         record.modId
-      }\nTimestamp: ${new Date(record.timestamp).toLocaleString()}`,
+      }>\nTimestamp: ${new Date(record.timestamp).toLocaleString()}`,
       inline: false,
     }));
 

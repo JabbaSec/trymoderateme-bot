@@ -42,6 +42,17 @@ module.exports = {
             .setDescription("ID of the note to remove")
             .setRequired(true)
         )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("clear")
+        .setDescription("Clears all of a user's notes.")
+        .addUserOption((option) =>
+          option
+            .setName("user")
+            .setDescription("The user to clear notes for")
+            .setRequired(true)
+        )
     ),
 
   async execute(interaction, client) {
@@ -57,13 +68,35 @@ module.exports = {
       case "add": {
         const user = interaction.options.getUser("user");
         const note = interaction.options.getString("note");
+
+        const noteEmbed = new EmbedBuilder()
+          .setAuthor({
+            name: `${interaction.user.tag}`,
+            iconURL: interaction.member.displayAvatarURL(),
+          })
+          .setColor("#ffff00")
+          .setThumbnail(`${user.displayAvatarURL()}`)
+          .setTitle(":pencil: Note")
+          .setFields([
+            {
+              name: `${user.tag}`,
+              value: `${note}`,
+            },
+          ]);
+
         await client.handleModeration.addModAction(
           user.id,
           interaction.user.id,
           "Note",
           note
         );
-        await interaction.reply(`Added note to ${user.tag}: ${note}`);
+        await interaction.reply(`Note added to ${user.tag}.`);
+
+        interaction.guild.channels.cache
+          .get(process.env.BOT_LOGGING)
+          .send({ embeds: [noteEmbed] })
+          .catch((err) => console.log("[NOTE] Error with sending the embed."));
+
         break;
       }
 
@@ -86,7 +119,7 @@ module.exports = {
 
         await client.paginationEmbed(interaction, noteFields, {
           title: `Notes for ${user.tag}`,
-          color: "#FFA500",
+          color: "#ffff00",
         });
         break;
       }
@@ -95,6 +128,13 @@ module.exports = {
         const noteId = interaction.options.getString("noteid");
         await client.handleModeration.removeModAction(noteId);
         await interaction.reply(`Removed note with ID ${noteId}`);
+        break;
+      }
+
+      case "clear": {
+        const user = interaction.options.getUser("user");
+        await client.handleModeration.clearModAction(user.id, "Note");
+        await interaction.reply(`All notes have been cleared from ${user.tag}`);
         break;
       }
     }

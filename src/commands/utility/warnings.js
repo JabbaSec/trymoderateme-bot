@@ -68,6 +68,22 @@ module.exports = {
       case "add": {
         const user = interaction.options.getUser("user");
         const reason = interaction.options.getString("reason");
+
+        const warningEmbed = new EmbedBuilder()
+          .setAuthor({
+            name: `${interaction.user.tag}`,
+            iconURL: interaction.member.displayAvatarURL(),
+          })
+          .setColor("#ff0000")
+          .setThumbnail(`${user.displayAvatarURL()}`)
+          .setTitle(":warning: Warning")
+          .setFields([
+            {
+              name: `${user.tag}`,
+              value: `${reason}`,
+            },
+          ]);
+
         await client.handleModeration.addModAction(
           user.id,
           interaction.user.id,
@@ -75,6 +91,22 @@ module.exports = {
           reason
         );
         await interaction.reply(`Warned ${user.tag} for: ${reason}`);
+
+        await user
+          .send({
+            content: `:warning: You have been warned!\nReason: ${reason}`,
+          })
+          .catch(() =>
+            interaction.followUp({
+              content: `[WARNING] I cannot DM that user.`,
+            })
+          );
+
+        interaction.guild.channels.cache
+          .get(process.env.BOT_LOGGING)
+          .send({ embeds: [warningEmbed] })
+          .catch((err) => console.log("[WARN] Error with sending the embed."));
+
         break;
       }
 
